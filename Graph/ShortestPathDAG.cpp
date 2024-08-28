@@ -3,6 +3,12 @@ using namespace std;
 
 void ShortestPath(vector<vector<pair<int,int>>>& adj,int source)
 { 
+     vector<int> indegree(adj.size(),0);
+     for(const auto& d:adj){
+         for(const auto& [v,w]:d){
+            indegree[v]++;
+         }
+     }
      vector<int> dp(adj.size(),INT_MAX);
      queue<int> q;
      q.push(source);
@@ -10,10 +16,12 @@ void ShortestPath(vector<vector<pair<int,int>>>& adj,int source)
      while(!q.empty())
      {
          int x = q.front();
+         indegree[x]=-1;
          q.pop();
          for(auto& [n,dist]:adj[x]){
             dp[n] = min(dp[n],dp[x]+dist);
-            q.push(n);
+            indegree[n]--;
+            if(indegree[n]==0) q.push(n);
          }
      }
      for(int i=0;i<dp.size();i++){
